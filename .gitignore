@@ -1,0 +1,17 @@
+### IntelliJ ###
+.idea/
+*.iml
+
+### Maven ###
+target/
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Logs ###
+*.log
+
+### Environment ###
+.env
+application-local.properties
