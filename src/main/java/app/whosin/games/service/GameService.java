@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service()
+@Service
 public class GameService {
     private final GameRepository gameRepository;
     private final GameMapper gameMapper;
@@ -18,7 +18,7 @@ public class GameService {
         this.gameMapper = gameMapper;
     }
 
-    @Transactional()
+    @Transactional
     public List<GameResponse> findAll() {
         return gameRepository.findAll().stream().map(gameMapper::toResponse).toList();
     }

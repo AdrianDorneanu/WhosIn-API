@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController()
+@RestController
 @RequestMapping("/games")
 public class GameController {
     private final GameService gameService;
@@ -17,7 +17,7 @@ public class GameController {
         this.gameService = gameService;
     }
 
-    @GetMapping()
+    @GetMapping
     public List<GameResponse> findAll() {
         return gameService.findAll();
     }
