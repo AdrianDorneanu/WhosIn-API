@@ -1,5 +1,6 @@
 package app.whosin.common.config;
 
+import app.whosin.common.security.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -85,7 +86,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             @Qualifier("accessTokenDecoder")
-            JwtDecoder accessTokenDecoder
+            JwtDecoder accessTokenDecoder,
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
     ) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -95,6 +97,12 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
+                        )
+                )
+
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.authenticationEntryPoint(
+                                jwtAuthenticationEntryPoint
                         )
                 )
 
@@ -112,7 +120,9 @@ public class SecurityConfig {
                 )
 
                 .oauth2ResourceServer(resourceServer ->
-                        resourceServer.jwt(jwt ->
+                        resourceServer.authenticationEntryPoint(
+                                jwtAuthenticationEntryPoint
+                        ).jwt(jwt ->
                                 jwt.decoder(accessTokenDecoder)
                         )
                 );
