@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -27,7 +28,8 @@ public class AuthService {
 
     @Transactional
     public SignupResponse signUp(SignupRequest request) {
-        boolean emailAlreadyExists = userRepository.existsByEmail(request.email());
+        String normalizedEmail = normalizeEmail(request.email());
+        boolean emailAlreadyExists = userRepository.existsByEmail(normalizedEmail);
 
         if (emailAlreadyExists) {
             throw new EmailAlreadyExistsException("Email is already in use");
@@ -35,7 +37,7 @@ public class AuthService {
 
         String passwordHash = passwordEncoder.encode(request.password());
 
-        User user = new User(request.email(),
+        User user = new User(normalizedEmail,
                 passwordHash,
                 request.displayName(),
                 null,
@@ -48,7 +50,9 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.email())
+        String normalizedEmail = normalizeEmail(request.email());
+
+        User user = userRepository.findByEmail(normalizedEmail)
                 .orElseThrow(this::invalidCredentials);
 
         if (user.getPasswordHash() == null) {
@@ -113,5 +117,9 @@ public class AuthService {
                 user.getStatus(),
                 user.getCreatedAt()
         );
+    }
+
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 }
