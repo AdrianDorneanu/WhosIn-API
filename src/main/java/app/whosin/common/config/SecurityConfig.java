@@ -24,8 +24,11 @@ import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class SecurityConfig {
+    private final String jwtIssuer;
 
-    private static final String JWT_ISSUER = "whosin-api";
+    public SecurityConfig(@Value("${security.jwt.issuer}") String jwtIssuer) {
+        this.jwtIssuer = jwtIssuer;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -63,7 +66,7 @@ public class SecurityConfig {
         NimbusJwtDecoder decoder = createDecoder(secret);
 
         decoder.setJwtValidator(
-                JwtValidators.createDefaultWithIssuer(JWT_ISSUER)
+                JwtValidators.createDefaultWithIssuer(jwtIssuer)
         );
 
         return decoder;
@@ -76,7 +79,7 @@ public class SecurityConfig {
         NimbusJwtDecoder decoder = createDecoder(secret);
 
         decoder.setJwtValidator(
-                JwtValidators.createDefaultWithIssuer(JWT_ISSUER)
+                JwtValidators.createDefaultWithIssuer(jwtIssuer)
         );
 
         return decoder;

@@ -4,6 +4,7 @@ import app.whosin.auth.dto.AuthResponse;
 import app.whosin.auth.exception.InvalidRefreshTokenException;
 import app.whosin.users.entity.User;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
@@ -14,35 +15,38 @@ import java.util.UUID;
 
 @Service
 public class JwtService {
-    private static final Duration ACCESS_TOKEN_DURATION = Duration.ofMinutes(15);
-    private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(7);
-
     private final JwtEncoder accessTokenEncoder;
     private final JwtEncoder refreshTokenEncoder;
     private final JwtDecoder refreshTokenDecoder;
+    private final Duration accessTokenDuration;
+    private final Duration refreshTokenDuration;
 
     public JwtService(
             @Qualifier("accessTokenEncoder") JwtEncoder accessTokenEncoder,
             @Qualifier("refreshTokenEncoder") JwtEncoder refreshTokenEncoder,
-            @Qualifier("refreshTokenDecoder") JwtDecoder refreshTokenDecoder
+            @Qualifier("refreshTokenDecoder") JwtDecoder refreshTokenDecoder,
+            @Value("${security.jwt.access-duration}") Duration accessTokenDuration,
+            @Value("${security.jwt.refresh-duration}") Duration refreshTokenDuration
     ) {
         this.accessTokenEncoder = accessTokenEncoder;
         this.refreshTokenDecoder = refreshTokenDecoder;
         this.refreshTokenEncoder = refreshTokenEncoder;
+        this.accessTokenDuration = accessTokenDuration;
+        this.refreshTokenDuration = refreshTokenDuration;
     }
 
     public AuthResponse createTokens(User user) {
         String accessToken = createToken(
                 user,
                 "access",
-                ACCESS_TOKEN_DURATION,
+                accessTokenDuration,
                 accessTokenEncoder
         );
 
         String refreshToken = createToken(
                 user,
                 "refresh",
-                REFRESH_TOKEN_DURATION,
+                refreshTokenDuration,
                 refreshTokenEncoder
         );
 
