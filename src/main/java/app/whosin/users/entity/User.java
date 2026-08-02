@@ -73,7 +73,6 @@ public class User {
         this.displayName = displayName;
         this.avatarUrl = avatarUrl;
         this.timezone = timezone;
-        this.status = UserStatus.ACTIVE;
     }
 
     @PrePersist

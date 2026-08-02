@@ -6,10 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GameMapper {
-
     public GameResponse toResponse(Game game) {
         return new GameResponse(
-                game.getId(),
                 game.getPublicId(),
                 game.getOrganizer().getId(),
                 game.getOrganizer().getDisplayName(),

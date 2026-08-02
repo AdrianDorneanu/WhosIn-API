@@ -84,6 +84,25 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(FeatureNotImplementedException.class)
+    public ResponseEntity<ApiError> handleFeatureNotImplemented(
+            FeatureNotImplementedException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.NOT_IMPLEMENTED;
+
+        ApiError error = new ApiError(
+                Instant.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI(),
+                null
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
     private ResponseEntity<ApiError> buildError(
             HttpStatus status,
             String message,

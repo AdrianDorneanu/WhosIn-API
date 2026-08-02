@@ -146,7 +146,6 @@ public class Game {
         this.maxPlayers = maxPlayers;
         this.costPerPlayer = costPerPlayer;
         this.notes = notes;
-        this.status = GameStatus.UPCOMING;
     }
 
     @PrePersist

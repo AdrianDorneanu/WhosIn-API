@@ -8,37 +8,20 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public record GameResponse(
-
-        UUID id,
-
         String publicId,
-
         UUID organizerId,
-
         String organizerName,
-
         String title,
-
         String sport,
-
         OffsetDateTime startsAt,
-
         OffsetDateTime endsAt,
-
         String location,
-
         Integer maxPlayers,
-
         GameStatus status,
-
         OffsetDateTime cancelledAt,
-
         BigDecimal costPerPlayer,
-
         String notes,
-
         Instant createdAt,
-
         Instant updatedAt
 
 ) {
