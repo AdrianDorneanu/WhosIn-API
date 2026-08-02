@@ -3,6 +3,7 @@ package app.whosin.games.controller;
 import app.whosin.games.dto.CreateGameRequest;
 import app.whosin.games.dto.GameResponse;
 import app.whosin.games.service.GameService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,12 +24,20 @@ public class GameController {
     }
 
     @GetMapping
+    @Operation(summary = "Get all games", description = "Returns all the available games")
     @ResponseStatus(HttpStatus.OK)
     public List<GameResponse> findAll() {
         return gameService.findAll();
     }
 
     @PostMapping
+    @Operation(
+            summary = "Create a new game",
+            description = """
+                    Creates a new sports game for the authenticated user.
+                    The authenticated user automatically becomes the organizer.
+                    """
+    )
     @ResponseStatus(HttpStatus.CREATED)
     public GameResponse createGame(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody CreateGameRequest request) {
         UUID organizerId = UUID.fromString(Objects.requireNonNull(jwt.getSubject()));

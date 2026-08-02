@@ -34,7 +34,7 @@ public class GameService {
 
     @Transactional
     public GameResponse createGame(UUID organizerId, CreateGameRequest request) {
-        User organizer = userRepository.findById(organizerId).orElseThrow(() -> new AccessDeniedException("Authenticated user no longer exists"));
+        User organizer = userRepository.findById(organizerId).orElseThrow(() -> new AccessDeniedException("User not found"));
 
         if (organizer.getStatus() != UserStatus.ACTIVE) {
             throw new AccessDeniedException("Only active users can create games");
