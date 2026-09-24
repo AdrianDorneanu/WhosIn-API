@@ -5,17 +5,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtValidators;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.SecretKey;
@@ -86,6 +83,31 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JwtEncoder anonymousTokenEncoder(
+            @Value("${security.jwt.anonymous-secret}") String secret
+    ) {
+        SecretKey secretKey = createSecretKey(secret);
+
+        return NimbusJwtEncoder
+                .withSecretKey(secretKey)
+                .algorithm(MacAlgorithm.HS256)
+                .build();
+    }
+
+    @Bean
+    public JwtDecoder anonymousTokenDecoder(
+            @Value("${security.jwt.anonymous-secret}") String secret
+    ) {
+        NimbusJwtDecoder decoder = createDecoder(secret);
+
+        decoder.setJwtValidator(
+                JwtValidators.createDefaultWithIssuer(jwtIssuer)
+        );
+
+        return decoder;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             @Qualifier("accessTokenDecoder")
@@ -118,6 +140,13 @@ public class SecurityConfig {
                                 "/v3/api-docs/**"
                         )
                         .permitAll()
+
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/anonymous-identities"
+                        )
+                        .permitAll()
+
                         .anyRequest()
                         .authenticated()
                 )
