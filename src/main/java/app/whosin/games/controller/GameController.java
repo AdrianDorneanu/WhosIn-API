@@ -30,6 +30,13 @@ public class GameController {
         return gameService.findAll();
     }
 
+    @GetMapping("/{publicId}")
+    @Operation(summary = "Get a game by public ID", description = "Returns the game with the specified public ID")
+    @ResponseStatus(HttpStatus.OK)
+    public GameResponse findByPublicId(@PathVariable UUID publicId) {
+        return gameService.findByPublicId(publicId);
+    }
+
     @PostMapping
     @Operation(
             summary = "Create a new game",

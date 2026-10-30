@@ -22,7 +22,7 @@ public class GameParticipantController {
     @PostMapping("/{publicId}/join")
     @ResponseStatus(HttpStatus.CREATED)
     public void join(
-            @PathVariable String publicId,
+            @PathVariable UUID publicId,
             @AuthenticationPrincipal Jwt jwt,
             @RequestHeader(
                     value = "X-Anonymous-Token",

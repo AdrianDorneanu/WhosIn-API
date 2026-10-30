@@ -4,6 +4,7 @@ import app.whosin.anonymousIdentities.entity.AnonymousIdentity;
 import app.whosin.anonymousIdentities.exception.InvalidAnonymousTokenException;
 import app.whosin.anonymousIdentities.repository.AnonymousIdentityRepository;
 import app.whosin.anonymousIdentities.service.AnonymousIdentityJwtService;
+import app.whosin.common.exception.ResourceNotFoundException;
 import app.whosin.gameParticipants.dto.JoinGameRequest;
 import app.whosin.gameParticipants.entity.GameParticipant;
 import app.whosin.gameParticipants.repository.GameParticipantRepository;
@@ -33,11 +34,11 @@ public class GameParticipantService {
     }
 
     @Transactional
-    public void joinAsUser(String gamePublicId, UUID userId) {
+    public void joinAsUser(UUID gamePublicId, UUID userId) {
         Game game = gameRepository.findByPublicId(gamePublicId)
-                .orElseThrow(() -> new RuntimeException("Game not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Game not found"));
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         boolean alreadyJoined = gameParticipantRepository.existsByGameIdAndUserId(game.getId(), user.getId());
 
@@ -52,13 +53,13 @@ public class GameParticipantService {
 
     @Transactional
     public void joinAsAnonymous(
-            String gamePublicId,
+            UUID gamePublicId,
             String anonymousToken,
             JoinGameRequest request
     ) {
         Game game = gameRepository.findByPublicId(gamePublicId)
                 .orElseThrow(() ->
-                        new RuntimeException("Game not found")
+                        new ResourceNotFoundException("Game not found")
                 );
 
         UUID anonymousIdentityId =

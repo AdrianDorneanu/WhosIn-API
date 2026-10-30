@@ -8,7 +8,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public record GameResponse(
-        String publicId,
+        UUID publicId,
         UUID organizerId,
         String organizerName,
         String title,

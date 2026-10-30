@@ -39,7 +39,7 @@ public class Game {
             nullable = false,
             unique = true
     )
-    private String publicId;
+    private UUID publicId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
@@ -125,7 +125,7 @@ public class Game {
     }
 
     public Game(
-            String publicId,
+            UUID publicId,
             User organizer,
             String title,
             String sport,
@@ -193,7 +193,7 @@ public class Game {
         return id;
     }
 
-    public String getPublicId() {
+    public UUID getPublicId() {
         return publicId;
     }
 

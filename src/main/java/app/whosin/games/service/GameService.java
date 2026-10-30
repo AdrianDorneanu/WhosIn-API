@@ -1,5 +1,6 @@
 package app.whosin.games.service;
 
+import app.whosin.common.exception.ResourceNotFoundException;
 import app.whosin.games.dto.CreateGameRequest;
 import app.whosin.games.dto.GameResponse;
 import app.whosin.games.entity.Game;
@@ -32,15 +33,21 @@ public class GameService {
         return gameRepository.findAll().stream().map(gameMapper::toResponse).toList();
     }
 
+    @Transactional(readOnly = true)
+    public GameResponse findByPublicId(UUID publicId) {
+        Game game = gameRepository.findByPublicId(publicId).orElseThrow(() -> new ResourceNotFoundException("Game not found"));
+        return gameMapper.toResponse(game);
+    }
+
     @Transactional
     public GameResponse createGame(UUID organizerId, CreateGameRequest request) {
-        User organizer = userRepository.findById(organizerId).orElseThrow(() -> new AccessDeniedException("User not found"));
+        User organizer = userRepository.findById(organizerId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (organizer.getStatus() != UserStatus.ACTIVE) {
             throw new AccessDeniedException("Only active users can create games");
         }
 
-        String publicId = generatePublicId();
+        UUID publicId = generatePublicId();
 
         Game game = new Game(publicId, organizer, request.title(), request.sport(), request.startsAt(), request.endsAt(), request.location(), request.maxPlayers(), request.costPerPlayer(), request.notes());
 
@@ -49,7 +56,7 @@ public class GameService {
         return gameMapper.toResponse(savedGame);
     }
 
-    private String generatePublicId() {
-        return UUID.randomUUID().toString();
+    private UUID generatePublicId() {
+        return UUID.randomUUID();
     }
 }
