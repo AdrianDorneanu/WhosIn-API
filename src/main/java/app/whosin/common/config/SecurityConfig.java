@@ -137,8 +137,7 @@ public class SecurityConfig {
                                 "/auth/login",
                                 "/auth/refresh",
                                 "/swagger-ui/**",
-                                "/docs",
-                                "/v3/api-docs/**"
+                                "/docs"
                         )
                         .permitAll()
 
